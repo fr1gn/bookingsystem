@@ -3,12 +3,14 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
 	authpb "github.com/fr1gn/bookingsystem/backend/gobooking/api-gateway/auth"
 	bookingpb "github.com/fr1gn/bookingsystem/backend/gobooking/api-gateway/booking"
 	"github.com/fr1gn/bookingsystem/backend/gobooking/api-gateway/handler"
 	listingpb "github.com/fr1gn/bookingsystem/backend/gobooking/api-gateway/listing"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 )
@@ -43,6 +45,16 @@ func main() {
 
 	// Gin router
 	r := gin.Default()
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
 	handler.RegisterAuthRoutes(r, authClient)
 	handler.RegisterBookingRoutes(r, bookingClient)
 	handler.RegisterListingRoutes(r, listingClient)

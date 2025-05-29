@@ -5,10 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 )
 
 const mailerSendURL = "https://api.mailersend.com/v1/email"
+
+var MailerSendAPIKey = "mlsn.52e41b77fc003e12d149917b08be5cc04d14bcebfdd78e3f1bf9a4d17cbf8704"
 
 type EmailPayload struct {
 	From    EmailAddress   `json:"from"`
@@ -25,7 +26,7 @@ type EmailAddress struct {
 func SendVerificationEmail(to string, code string) error {
 	payload := EmailPayload{
 		From: EmailAddress{
-			Email: "noreply@gobooking.kz", // already registrated ppl
+			Email: "noreply@gobooking.kz",
 			Name:  "GoBooking",
 		},
 		To: []EmailAddress{
@@ -46,7 +47,7 @@ func SendVerificationEmail(to string, code string) error {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+os.Getenv("MAILERSEND_API_KEY"))
+	req.Header.Set("Authorization", "Bearer "+MailerSendAPIKey)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)

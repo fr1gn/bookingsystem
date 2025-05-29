@@ -8,14 +8,13 @@ import (
 	"github.com/fr1gn/bookingsystem/backend/gobooking/services/auth-service/internal/repository"
 	"github.com/fr1gn/bookingsystem/backend/gobooking/services/auth-service/pkg/email"
 	"github.com/fr1gn/bookingsystem/backend/gobooking/services/auth-service/shared"
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
-import emailpkg "github.com/fr1gn/bookingsystem/backend/gobooking/services/auth-service/pkg/email"
+var JWTSecret = []byte("elbobritobandito228")
 
 type AuthService struct {
 	UserRepo *repository.UserRepo
@@ -25,9 +24,9 @@ func NewAuthService(repo *repository.UserRepo) *AuthService {
 	return &AuthService{UserRepo: repo}
 }
 
-func (s *AuthService) SendVerificationEmail(email string) error {
+func (s *AuthService) SendVerificationEmail(emailAddr string) error {
 	code := generateCode()
-	return emailpkg.SendVerificationEmail(email, code)
+	return email.SendVerificationEmail(emailAddr, code)
 }
 
 // ----- REGISTER -----
@@ -55,9 +54,9 @@ func (s *AuthService) RegisterUser(ctx context.Context, fullName, emailAddr, pas
 		return nil, err
 	}
 
-	// Send verification code
+	// Отправка кода подтверждения без блокировки
 	code := generateCode()
-	go email.SendVerificationEmail(user.Email, code) // без блокировки
+	go email.SendVerificationEmail(user.Email, code)
 
 	return user, nil
 }
@@ -80,6 +79,7 @@ func (s *AuthService) LoginUser(ctx context.Context, emailAddr, password string)
 		data, _ := json.Marshal(user)
 		_ = shared.SetCache("user:"+emailAddr, string(data), 10*time.Minute)
 	}
+
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 	if err != nil {
 		return "", "", errors.New("invalid credentials")
@@ -115,7 +115,7 @@ type Claims struct {
 }
 
 func generateJWT(userID string, duration time.Duration) (string, error) {
-	key := []byte(os.Getenv("JWT_SECRET"))
+	key := JWTSecret
 	claims := Claims{
 		UserID: userID,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -128,7 +128,7 @@ func generateJWT(userID string, duration time.Duration) (string, error) {
 }
 
 func parseJWT(tokenStr string) (*Claims, error) {
-	key := []byte(os.Getenv("JWT_SECRET"))
+	key := JWTSecret
 	token, err := jwt.ParseWithClaims(tokenStr, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return key, nil
 	})
@@ -141,5 +141,5 @@ func parseJWT(tokenStr string) (*Claims, error) {
 // ----- SIMPLE EMAIL VERIFICATION CODE -----
 
 func generateCode() string {
-	return time.Now().Format("150405") // Пример: "153207"
+	return time.Now().Format("150405")
 }

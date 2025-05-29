@@ -1,7 +1,7 @@
 package handler
 
 import (
-	authpb "github.com/fr1gn/bookingsystem/backend/gobooking/services/auth-service/auth"
+	authpb "github.com/fr1gn/bookingsystem/backend/gobooking/api-gateway/auth"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

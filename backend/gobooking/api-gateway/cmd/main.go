@@ -6,9 +6,9 @@ import (
 	"log"
 	"net/http"
 
-	authpb "github.com/fr1gn/bookingsystem/backend/gobooking/services/auth-service/auth"
-	bookingpb "github.com/fr1gn/bookingsystem/backend/gobooking/services/booking-service/booking"
-	listingpb "github.com/fr1gn/bookingsystem/backend/gobooking/services/listing-service/listing"
+	authpb "github.com/fr1gn/bookingsystem/backend/gobooking/api-gateway/auth"
+	bookingpb "github.com/fr1gn/bookingsystem/backend/gobooking/api-gateway/booking"
+	listingpb "github.com/fr1gn/bookingsystem/backend/gobooking/api-gateway/listing"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 )

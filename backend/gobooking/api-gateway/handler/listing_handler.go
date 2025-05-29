@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"github.com/fr1gn/bookingsystem/backend/gobooking/services/listing-service/listing"
+	"github.com/fr1gn/bookingsystem/backend/gobooking/api-gateway/listing"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"

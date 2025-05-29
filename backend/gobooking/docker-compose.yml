@@ -1,6 +1,26 @@
 version: '3.8'
 
 services:
+  mongo:
+    image: mongo:6.0
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:7.0-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  nats:
+    image: nats:2.10-alpine
+    restart: unless-stopped
+    ports:
+      - "4222:4222"
+
   auth-service:
     build:
       context: .
@@ -36,35 +56,14 @@ services:
 
   api-gateway:
     build:
-      context: api-gateway
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: api-gateway/Dockerfile
     ports:
       - "8080:8080"
     depends_on:
       - auth-service
       - booking-service
       - listing-service
-
-  mongo:
-    image: mongo:6.0
-    restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
-
-  redis:
-    image: redis:7.0-alpine
-    restart: always
-    ports:
-      - "6379:6379"
-
-  nats:
-    image: nats:latest
-    restart: always
-    ports:
-      - "4222:4222"
-      - "8222:8222"
 
 volumes:
   mongo_data:

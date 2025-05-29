@@ -1,34 +1,47 @@
 package main
 
 import (
-	"github.com/fr1gn/bookingsystem/backend/gobooking/api-gateway/config"
-	"github.com/fr1gn/bookingsystem/backend/gobooking/api-gateway/handler"
 	"log"
 	"net/http"
 
 	authpb "github.com/fr1gn/bookingsystem/backend/gobooking/api-gateway/auth"
 	bookingpb "github.com/fr1gn/bookingsystem/backend/gobooking/api-gateway/booking"
+	"github.com/fr1gn/bookingsystem/backend/gobooking/api-gateway/handler"
 	listingpb "github.com/fr1gn/bookingsystem/backend/gobooking/api-gateway/listing"
+
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 )
 
 func main() {
-	cfg, err := config.Load("../config/config.yaml")
-	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
-	}
+	authAddress := "auth-service:50051"
+	bookingAddress := "booking-service:50052"
+	listingAddress := "listing-service:50053"
 
 	// gRPC clients
-	authConn, _ := grpc.Dial(cfg.AuthAddress, grpc.WithInsecure())
-	bookingConn, _ := grpc.Dial(cfg.BookingAddress, grpc.WithInsecure())
-	listingConn, _ := grpc.Dial(cfg.ListingAddress, grpc.WithInsecure())
+	authConn, err := grpc.Dial(authAddress, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("Failed to connect to auth service: %v", err)
+	}
+	defer authConn.Close()
+
+	bookingConn, err := grpc.Dial(bookingAddress, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("Failed to connect to booking service: %v", err)
+	}
+	defer bookingConn.Close()
+
+	listingConn, err := grpc.Dial(listingAddress, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("Failed to connect to listing service: %v", err)
+	}
+	defer listingConn.Close()
 
 	authClient := authpb.NewAuthServiceClient(authConn)
 	bookingClient := bookingpb.NewBookingServiceClient(bookingConn)
 	listingClient := listingpb.NewListingServiceClient(listingConn)
 
-	// Gin
+	// Gin router
 	r := gin.Default()
 	handler.RegisterAuthRoutes(r, authClient)
 	handler.RegisterBookingRoutes(r, bookingClient)

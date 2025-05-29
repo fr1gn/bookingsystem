@@ -7,6 +7,9 @@ RUN go mod download
 
 COPY services/booking-service/ ./
 
+COPY services/booking-service/.env /app/.env
+COPY services/booking-service/config /app/config
+
 RUN go build -o booking-service ./cmd/main.go
 
 CMD ["./booking-service"]

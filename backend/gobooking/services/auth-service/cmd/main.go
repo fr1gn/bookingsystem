@@ -10,32 +10,25 @@ import (
 	"log"
 	"net"
 
-	"github.com/joho/godotenv"
 	_ "go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc"
 )
 
 func main() {
-	// Load .env
-	if err := godotenv.Load("../.env"); err != nil {
-		log.Fatal("Failed to load .env")
-	}
 
-	// Load config.yaml
-	cfg, err := shared.LoadConfig("../config/config.yaml")
-	if err != nil {
-		log.Fatal("Failed to load config:", err)
-	}
+	mongoURI := "mongodb://mongo:27017"
+	mongoDB := "gobooking"
+	redisAddr := "redis:6379"
 
 	// Connect to Mongo
-	mongoClient, err := shared.InitMongo(cfg.MongoURI)
+	mongoClient, err := shared.InitMongo(mongoURI)
 	if err != nil {
 		log.Fatal("Mongo connect error:", err)
 	}
-	db := mongoClient.Database(cfg.MongoDB)
+	db := mongoClient.Database(mongoDB)
 
 	// Init Redis
-	if err := shared.InitRedis(cfg.RedisAddr); err != nil {
+	if err := shared.InitRedis(redisAddr); err != nil {
 		log.Fatal("Redis error:", err)
 	}
 

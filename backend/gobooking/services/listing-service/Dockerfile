@@ -7,6 +7,9 @@ RUN go mod download
 
 COPY services/listing-service/ ./
 
+COPY services/listing-service/.env /app/.env
+COPY services/listing-service/config /app/config
+
 RUN go build -o listing-service ./cmd/main.go
 
 CMD ["./listing-service"]

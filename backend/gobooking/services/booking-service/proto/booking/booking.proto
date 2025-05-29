@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package booking;
+
+option go_package = "github.com/fr1gn/bookingsystem/backend/gobooking/services/booking-service/proto/booking;booking";
+
+service BookingService {
+  rpc CreateBooking (CreateBookingRequest) returns (BookingResponse);
+  rpc CancelBooking (CancelBookingRequest) returns (BookingResponse);
+  rpc GetBookingById (GetBookingRequest) returns (BookingResponse);
+  rpc ListBookingsForUser (ListBookingsRequest) returns (ListBookingsResponse);
+}
+
+message CreateBookingRequest {
+  string user_id = 1;
+  string listing_id = 2;
+  string start_date = 3; // ISO string
+  string end_date = 4;
+  string duration_type = 5; // "hour", "day", or "month"
+}
+
+message CancelBookingRequest {
+  string booking_id = 1;
+}
+
+message GetBookingRequest {
+  string booking_id = 1;
+}
+
+message ListBookingsRequest {
+  string user_id = 1;
+}
+
+message BookingResponse {
+  string booking_id = 1;
+  string user_id = 2;
+  string listing_id = 3;
+  string start_date = 4;
+  string end_date = 5;
+  string duration_type = 6;
+  string status = 7; // "active", "cancelled"
+}
+
+message ListBookingsResponse {
+  repeated BookingResponse bookings = 1;
+}

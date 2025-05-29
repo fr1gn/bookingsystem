@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package listing;
+
+option go_package = "github.com/fr1gn/bookingsystem/backend/gobooking/services/listing-service/proto/listing;listing";
+
+service ListingService {
+  rpc CreateListing (CreateListingRequest) returns (ListingResponse);
+  rpc GetListingById (GetListingRequest) returns (ListingResponse);
+  rpc SearchListings (SearchListingsRequest) returns (SearchListingsResponse);
+}
+
+message CreateListingRequest {
+  string title = 1;
+  string description = 2;
+  string city = 3;
+  double price = 4;
+  string owner_id = 5;
+  string category = 6; // example: "apartment", "studio", etc.
+}
+
+message GetListingRequest {
+  string listing_id = 1;
+}
+
+message SearchListingsRequest {
+  string city = 1;
+  double min_price = 2;
+  double max_price = 3;
+  string category = 4;
+}
+
+message ListingResponse {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string city = 4;
+  double price = 5;
+  string owner_id = 6;
+  string category = 7;
+}
+
+message SearchListingsResponse {
+  repeated ListingResponse listings = 1;
+}

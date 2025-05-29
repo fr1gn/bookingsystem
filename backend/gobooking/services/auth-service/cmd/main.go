@@ -17,12 +17,12 @@ import (
 
 func main() {
 	// Load .env
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Load("../.env"); err != nil {
 		log.Fatal("Failed to load .env")
 	}
 
 	// Load config.yaml
-	cfg, err := shared.LoadConfig("config/config.yaml")
+	cfg, err := shared.LoadConfig("../config/config.yaml")
 	if err != nil {
 		log.Fatal("Failed to load config:", err)
 	}

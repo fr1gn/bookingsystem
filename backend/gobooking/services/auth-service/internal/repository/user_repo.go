@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"auth-service/internal/model"
 	"context"
+	"github.com/fr1gn/bookingsystem/backend/gobooking/services/auth-service/internal/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )

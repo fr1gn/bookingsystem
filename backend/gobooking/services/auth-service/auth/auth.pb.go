@@ -406,7 +406,7 @@ const file_auth_auth_proto_rawDesc = "" +
 	"\fRegisterUser\x12\x15.auth.RegisterRequest\x1a\x12.auth.AuthResponse\x123\n" +
 	"\tLoginUser\x12\x12.auth.LoginRequest\x1a\x12.auth.AuthResponse\x12;\n" +
 	"\rValidateToken\x12\x12.auth.TokenRequest\x1a\x16.auth.ValidateResponse\x12B\n" +
-	"\x15SendVerificationEmail\x12\x12.auth.EmailRequest\x1a\x15.auth.GenericResponseB4Z2github.com/fr1gn/backend/gobooking/proto/auth;authb\x06proto3"
+	"\x15SendVerificationEmail\x12\x12.auth.EmailRequest\x1a\x15.auth.GenericResponseBXZVgithub.com/fr1gn/bookingsystem/backend/gobooking/services/auth-service/proto/auth;authb\x06proto3"
 
 var (
 	file_auth_auth_proto_rawDescOnce sync.Once

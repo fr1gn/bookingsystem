@@ -1,11 +1,13 @@
 package service
 
 import (
-	"auth-service/internal/model"
-	"auth-service/internal/repository"
-	"auth-service/pkg/email"
 	"context"
+	"encoding/json"
 	"errors"
+	"github.com/fr1gn/bookingsystem/backend/gobooking/services/auth-service/internal/model"
+	"github.com/fr1gn/bookingsystem/backend/gobooking/services/auth-service/internal/repository"
+	"github.com/fr1gn/bookingsystem/backend/gobooking/services/auth-service/pkg/email"
+	"github.com/fr1gn/bookingsystem/backend/gobooking/services/auth-service/shared"
 	"os"
 	"time"
 
@@ -13,12 +15,19 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+import emailpkg "github.com/fr1gn/bookingsystem/backend/gobooking/services/auth-service/pkg/email"
+
 type AuthService struct {
 	UserRepo *repository.UserRepo
 }
 
 func NewAuthService(repo *repository.UserRepo) *AuthService {
 	return &AuthService{UserRepo: repo}
+}
+
+func (s *AuthService) SendVerificationEmail(email string) error {
+	code := generateCode()
+	return emailpkg.SendVerificationEmail(email, code)
 }
 
 // ----- REGISTER -----
@@ -56,11 +65,21 @@ func (s *AuthService) RegisterUser(ctx context.Context, fullName, emailAddr, pas
 // ----- LOGIN -----
 
 func (s *AuthService) LoginUser(ctx context.Context, emailAddr, password string) (string, string, error) {
-	user, err := s.UserRepo.FindByEmail(ctx, emailAddr)
-	if err != nil {
-		return "", "", errors.New("user not found")
+	userJSON, err := shared.GetCache("user:" + emailAddr)
+	var user *model.User
+	if err == nil {
+		user = &model.User{}
+		if err := json.Unmarshal([]byte(userJSON), user); err != nil {
+			return "", "", err
+		}
+	} else {
+		user, err = s.UserRepo.FindByEmail(ctx, emailAddr)
+		if err != nil {
+			return "", "", errors.New("user not found")
+		}
+		data, _ := json.Marshal(user)
+		_ = shared.SetCache("user:"+emailAddr, string(data), 10*time.Minute)
 	}
-
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 	if err != nil {
 		return "", "", errors.New("invalid credentials")

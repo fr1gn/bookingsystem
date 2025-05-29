@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package auth;
 
-option go_package = "github.com/fr1gn/backend/gobooking/proto/auth;auth";
+option go_package = "github.com/fr1gn/bookingsystem/backend/gobooking/services/auth-service/proto/auth;auth";
 
 service AuthService {
   rpc RegisterUser (RegisterRequest) returns (AuthResponse);

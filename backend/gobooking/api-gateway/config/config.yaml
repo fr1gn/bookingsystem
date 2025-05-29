@@ -1,0 +1,3 @@
+auth_address: "localhost:50051"
+booking_address: "localhost:50052"
+listing_address: "localhost:50053"

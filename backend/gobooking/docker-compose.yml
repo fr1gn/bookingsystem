@@ -27,6 +27,10 @@ services:
       dockerfile: services/auth-service/Dockerfile
     ports:
       - "50051:50051"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017
+      - MONGO_DB=gobooking
+      - REDIS_ADDR=redis:6379
     depends_on:
       - mongo
       - redis

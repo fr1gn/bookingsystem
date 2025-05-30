@@ -26,6 +26,13 @@ func (r *UserRepo) CreateUser(ctx context.Context, user *model.User) error {
 	return err
 }
 
+func (r *UserRepo) VerifyEmail(ctx context.Context, email string) error {
+	filter := bson.M{"email": email}
+	update := bson.M{"$set": bson.M{"email_verified": true}}
+	_, err := r.Collection.UpdateOne(ctx, filter, update)
+	return err
+}
+
 func (r *UserRepo) FindByEmail(ctx context.Context, email string) (*model.User, error) {
 	var user model.User
 	err := r.Collection.FindOne(ctx, bson.M{"email": email}).Decode(&user)

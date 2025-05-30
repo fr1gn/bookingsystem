@@ -28,6 +28,14 @@ func (h *AuthHandler) RegisterUser(ctx context.Context, req *auth.RegisterReques
 	}, nil
 }
 
+func (h *AuthHandler) VerifyEmail(ctx context.Context, req *auth.VerifyEmailRequest) (*auth.VerifyEmailResponse, error) {
+	err := h.Service.VerifyEmail(ctx, req.Email, req.Code)
+	if err != nil {
+		return &auth.VerifyEmailResponse{Message: err.Error()}, nil
+	}
+	return &auth.VerifyEmailResponse{Message: "Email verified successfully"}, nil
+}
+
 func (h *AuthHandler) LoginUser(ctx context.Context, req *auth.LoginRequest) (*auth.AuthResponse, error) {
 	access, refresh, err := h.Service.LoginUser(ctx, req.Email, req.Password)
 	if err != nil {

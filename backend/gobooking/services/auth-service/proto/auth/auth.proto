@@ -9,6 +9,7 @@ service AuthService {
   rpc LoginUser (LoginRequest) returns (AuthResponse);
   rpc ValidateToken (TokenRequest) returns (ValidateResponse);
   rpc SendVerificationEmail (EmailRequest) returns (GenericResponse);
+  rpc VerifyEmail (VerifyEmailRequest) returns (VerifyEmailResponse);
 }
 
 message RegisterRequest {
@@ -28,6 +29,16 @@ message TokenRequest {
 
 message EmailRequest {
   string email = 1;
+}
+
+message VerifyEmailRequest {
+  string email = 1;
+  string code = 2;
+}
+
+
+message VerifyEmailResponse {
+  string message = 1;
 }
 
 message AuthResponse {

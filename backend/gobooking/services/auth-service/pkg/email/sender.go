@@ -1,64 +1,31 @@
 package email
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"net/http"
+	"net/smtp"
 )
 
-const mailerSendURL = "https://api.mailersend.com/v1/email"
-
-var MailerSendAPIKey = "mlsn.52e41b77fc003e12d149917b08be5cc04d14bcebfdd78e3f1bf9a4d17cbf8704"
-
-type EmailPayload struct {
-	From    EmailAddress   `json:"from"`
-	To      []EmailAddress `json:"to"`
-	Subject string         `json:"subject"`
-	Text    string         `json:"text"`
-}
-
-type EmailAddress struct {
-	Email string `json:"email"`
-	Name  string `json:"name,omitempty"`
-}
+const (
+	smtpHost = "smtp.gmail.com"
+	smtpPort = "587"
+	smtpUser = "ggtaiga06@gmail.com"
+	smtpPass = "xgarnsesmpvgktzd"
+)
 
 func SendVerificationEmail(to string, code string) error {
-	payload := EmailPayload{
-		From: EmailAddress{
-			Email: "noreply@gobooking.kz",
-			Name:  "GoBooking",
-		},
-		To: []EmailAddress{
-			{Email: to},
-		},
-		Subject: "Email Verification - GoBooking",
-		Text:    fmt.Sprintf("Your verification code is: %s", code),
-	}
+	from := smtpUser
+	pass := smtpPass
 
-	body, err := json.Marshal(payload)
+	msg := fmt.Sprintf("From: %s\r\n"+
+		"To: %s\r\n"+
+		"Subject: Email Verification - GoBooking\r\n\r\n"+
+		"Your verification code is: %s\r\n", from, to, code)
+
+	auth := smtp.PlainAuth("", from, pass, smtpHost)
+
+	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{to}, []byte(msg))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to send email: %w", err)
 	}
-
-	req, err := http.NewRequest("POST", mailerSendURL, bytes.NewBuffer(body))
-	if err != nil {
-		return err
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+MailerSendAPIKey)
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode >= 400 {
-		return fmt.Errorf("MailerSend returned status %d", resp.StatusCode)
-	}
-
 	return nil
 }

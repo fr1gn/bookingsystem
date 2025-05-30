@@ -46,6 +46,11 @@ func RegisterAuthRoutes(r *gin.Engine, client authpb.AuthServiceClient) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"message": res.Message})
+		c.JSON(http.StatusOK, gin.H{
+			"access_token":  res.AccessToken,
+			"refresh_token": res.RefreshToken,
+			"message":       res.Message,
+		})
 	})
+
 }

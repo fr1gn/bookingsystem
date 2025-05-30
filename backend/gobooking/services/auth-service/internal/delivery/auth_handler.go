@@ -16,11 +16,12 @@ func NewAuthHandler(service *service.AuthService) *AuthHandler {
 }
 
 func (h *AuthHandler) RegisterUser(ctx context.Context, req *auth.RegisterRequest) (*auth.AuthResponse, error) {
-	_, err := h.Service.RegisterUser(ctx, req.FullName, req.Email, req.Password)
+	user, err := h.Service.RegisterUser(ctx, req.FullName, req.Email, req.Password)
 	if err != nil {
+		log.Println("RegisterUser error:", err)
 		return &auth.AuthResponse{Message: err.Error()}, nil
 	}
-
+	log.Println("User registered:", user.Email)
 	return &auth.AuthResponse{
 		Message: "User registered successfully. Check your email for verification.",
 	}, nil
@@ -29,9 +30,10 @@ func (h *AuthHandler) RegisterUser(ctx context.Context, req *auth.RegisterReques
 func (h *AuthHandler) LoginUser(ctx context.Context, req *auth.LoginRequest) (*auth.AuthResponse, error) {
 	access, refresh, err := h.Service.LoginUser(ctx, req.Email, req.Password)
 	if err != nil {
+		log.Println("LoginUser error:", err)
 		return &auth.AuthResponse{Message: err.Error()}, nil
 	}
-
+	log.Println("User logged in:", req.Email)
 	return &auth.AuthResponse{
 		AccessToken:  access,
 		RefreshToken: refresh,

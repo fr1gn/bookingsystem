@@ -19,11 +19,17 @@ func NewUserRepo(db *mongo.Database) *UserRepo {
 
 func (r *UserRepo) CreateUser(ctx context.Context, user *model.User) error {
 	_, err := r.Collection.InsertOne(ctx, user)
+	if err != nil {
+		log.Println("InsertOne error:", err)
+	}
 	return err
 }
 
 func (r *UserRepo) FindByEmail(ctx context.Context, email string) (*model.User, error) {
 	var user model.User
 	err := r.Collection.FindOne(ctx, bson.M{"email": email}).Decode(&user)
+	if err != nil {
+		log.Println("FindOne error:", err)
+	}
 	return &user, err
 }

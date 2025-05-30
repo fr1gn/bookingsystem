@@ -4,6 +4,7 @@ import (
 	authpb "github.com/fr1gn/bookingsystem/backend/gobooking/api-gateway/auth"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
 )
 
 func RegisterAuthRoutes(r *gin.Engine, client authpb.AuthServiceClient) {
@@ -51,6 +52,23 @@ func RegisterAuthRoutes(r *gin.Engine, client authpb.AuthServiceClient) {
 			"refresh_token": res.RefreshToken,
 			"message":       res.Message,
 		})
+	})
+	r.GET("/auth/me", func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "authorization header required"})
+			return
+		}
+		token := strings.TrimPrefix(authHeader, "Bearer ")
+
+		validResp, err := client.ValidateToken(c, &authpb.TokenRequest{Token: token})
+		if err != nil || !validResp.IsValid {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+			return
+		}
+
+		userId := validResp.UserId
+		c.JSON(http.StatusOK, gin.H{"user": gin.H{"id": userId}})
 	})
 
 }

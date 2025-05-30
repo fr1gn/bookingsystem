@@ -28,4 +28,24 @@ func RegisterAuthRoutes(r *gin.Engine, client authpb.AuthServiceClient) {
 		}
 		c.JSON(http.StatusOK, gin.H{"message": res.Message})
 	})
+
+	r.POST("/auth/login", func(c *gin.Context) {
+		var req struct {
+			Email    string `json:"email"`
+			Password string `json:"password"`
+		}
+		if err := c.BindJSON(&req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		res, err := client.LoginUser(c, &authpb.LoginRequest{
+			Email:    req.Email,
+			Password: req.Password,
+		})
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": res.Message})
+	})
 }

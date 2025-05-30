@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/fr1gn/bookingsystem/backend/gobooking/services/auth-service/auth"
 	"github.com/fr1gn/bookingsystem/backend/gobooking/services/auth-service/internal/service"
+	"log"
 )
 
 type AuthHandler struct {

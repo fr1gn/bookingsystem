@@ -5,6 +5,7 @@ import (
 	"github.com/fr1gn/bookingsystem/backend/gobooking/services/auth-service/internal/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"log"
 )
 
 type UserRepo struct {

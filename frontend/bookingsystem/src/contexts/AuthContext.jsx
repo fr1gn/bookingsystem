@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
+import axiosInstance from '../api/axiosInstance';
 
 export const AuthContext = createContext();
 
@@ -9,6 +10,14 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         if (token) {
             localStorage.setItem('token', token);
+            // При загрузке, если токен есть, получаем данные пользователя
+            axiosInstance.get('/auth/me').then(res => {
+                setUser(res.data.user);
+            }).catch(() => {
+                setUser(null);
+                setToken(null);
+                localStorage.removeItem('token');
+            });
         } else {
             localStorage.removeItem('token');
             setUser(null);
@@ -23,6 +32,7 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         setToken(null);
         setUser(null);
+        localStorage.removeItem('token');
     };
 
     return (

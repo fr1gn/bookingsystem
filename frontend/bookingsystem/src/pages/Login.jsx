@@ -15,9 +15,11 @@ const Login = () => {
         setError(null);
         try {
             const res = await axiosInstance.post('/auth/login', { email, password });
-            login(res.data.token, res.data.user);
+            console.log('Login response:', res.data);
+            login(res.data.access_token, null);
             navigate('/');
         } catch (err) {
+            console.error('Login error:', err);
             setError(err.response?.data?.error || 'Login failed');
         }
     };
